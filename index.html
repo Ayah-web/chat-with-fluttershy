@@ -137,31 +137,44 @@
     </div>
 
     <script>
-        const responses = {
-            // REAL FLAG
-            'kindness_prevails': "🎉✨ Oh my goodness! You found me! You're so clever! Here's your special reward: <div class='flag'>BSU{fl0tt3rshy_w4s_h1d1ng_1n_pl41n_s1ght}</div> Thank you for being so patient and kind! 🦋💖",
+        const hashedResponses = {
+            '33cabccdd56c11b309a9803d7025f6d8dc8f31bc673b2e50b2bf20ea08ec18e1': "🎉✨ Oh my goodness! You found me! You're so clever! Here's your special reward: <div class='flag'>BSU{fl0tt3rshy_w4s_h1d1ng_1n_pl41n_s1ght}</div> Thank you for being so patient and kind! 🦋💖",
             
-            // PARTIAL ATTEMPTS
-            'kindness': "You're getting warmer! Kindness is indeed important to me, but there's more to the magic phrase... What does kindness do? 💖",
-            'prevails': "Ooh, that's part of it! 🦋 But what comes before that word? Think about what I represent...",
-            'kindness_prevails': "Perfect! You found the secret phrase! 🎉🦋 Here's your reward: <div class='flag'>BSU{fl0tt3rshy_w4s_h1d1ng_1n_pl41n_s1ght}</div>",
+            '2dd91040a484f1799803ffbbf3307a446022883396f959c3ac12cfe390bff0fd': "You're getting warmer! Kindness is indeed important to me, but there's more to the magic phrase... What does kindness do? 💖",
             
-            // DISCOVERY HINTS
-            'fluttershy': "That's my name! But I need to hear the magic words you discovered in the photo... What did the steganography reveal? 🌸",
-            'magic_words_2026': "Oh! You found the password! 🔓 But what secret message did it unlock for you? That's what I need to hear!",
-            'steganography': "You're so smart! 🕵️ You figured out there was a hidden message! Now, what did you find when you extracted it?",
+            '8d21b71a0266ef60df2ce1778f93ea32edb821a4d2d32a708ff279df6031e9ba': "Ooh, that's part of it! 🦋 But what comes before that word? Think about what I represent...",
             
-            // CHARACTER RESPONSES
-            'element of kindness': "That's what I represent! 🌸 But I need you to whisper the exact magic phrase you found...",
-            'friendship': "Friendship is magic indeed! But what's the specific phrase from your investigation? 🦋",
-            'hello': "Oh, hello there! I'm quite shy, you know... If you've solved the mystery in the photo, please share the magic words with me! 🌸",
-            'hi': "Hi! *hides behind mane* I'm looking for someone who found the secret message... Do you have the magic phrase?",
+            '33cabccdd56c11b309a9803d7025f6d8dc8f31bc673b2e50b2bf20ea08ec18e1': "Perfect! You found the secret phrase! 🎉🦋 Here's your reward: <div class='flag'>BSU{fl0tt3rshy_w4s_h1d1ng_1n_pl41n_s1ght}</div>",
             
-            // TECHNICAL TERMS
-            'base64': "Oh my! You're very technical! I bet you decoded something important... What did it lead you to discover? 💡",
-            'metadata': "You checked the photo's secrets! Very clever! That should have given you clues about passwords and usernames... 🌸",
-            '2026': "That's from this year! But I need the complete magic phrase you discovered... 🦋",
+            'b777ab121d78b08a4da9e2ec118edbe1cb1bf5b0b3c6a8af79bdd83188bb9cc5': "That's my name! But I need to hear the magic words you discovered in the photo... What did the steganography reveal? 🌸",
+            
+            'ad582e71e9a8ae3931420eb6b3c876f62855be3a2a7d472742b4df4b425b9d8b': "Oh! You found the password! 🔓 But what secret message did it unlock for you? That's what I need to hear!",
+            
+            'bfabba369a999a083b44f26c2da7bc52846cf39a872816d06969d2837840de6b': "You're so smart! 🕵️ You figured out there was a hidden message! Now, what did you find when you extracted it?",
+            
+            '6a376385891b019a06e39303a2e8420f8e7be5115a7ab1363ec13b7bdd24ba8e': "That's what I represent! 🌸 But I need you to whisper the exact magic phrase you found...",
+            
+            '4b529ac375b4217be17fef1a4a6f1624185cc99909e92278c0759e12ab3d61fa': "Friendship is magic indeed! But what's the specific phrase from your investigation? 🦋",
+            
+            '2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824': "Oh, hello there! I'm quite shy, you know... If you've solved the mystery in the photo, please share the magic words with me! 🌸",
+            
+            '8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4': "Hi! *hides behind mane* I'm looking for someone who found the secret message... Do you have the magic phrase?",
+            
+            '371a286d5872a3730d644327581546ec3e658bbf1a3c7f7f0de2bc19905d4402': "Oh my! You're very technical! I bet you decoded something important... What did it lead you to discover? 💡",
+            
+            '45447b7afbd5e544f7d0f1df0fccd26014d9850130abd3f020b89ff96b82079f': "You checked the photo's secrets! Very clever! That should have given you clues about passwords and usernames... 🌸",
+            
+            '158a323a7ba44870f23d96f1516dd70aa48e9a72db4ebb026b0a89e212a208ab': "That's from this year! But not quite the answer... 🦋"
         };
+
+        // Hash function using Web Crypto API
+        async function hashMessage(message) {
+            const msgUint8 = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
 
         function addMessage(message, isBot = false) {
             const chatMessages = document.getElementById('chatMessages');
@@ -178,7 +191,7 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        function sendMessage() {
+        async function sendMessage() {
             const input = document.getElementById('messageInput');
             const message = input.value.trim();
             
@@ -191,9 +204,11 @@
             input.value = '';
             
             // Simulate typing delay
-            setTimeout(() => {
+            setTimeout(async () => {
                 const lowerMessage = message.toLowerCase();
-                const response = responses[lowerMessage] || 
+                const messageHash = await hashMessage(lowerMessage);
+                
+                const response = hashedResponses[messageHash] || 
                     "I'm still hiding... 🤫 The photo you found me through has deeper secrets! Try using steganography tools with the right password... The metadata might help you! Keep investigating! ✨";
                 
                 addMessage(response, true);
