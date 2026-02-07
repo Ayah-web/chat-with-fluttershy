@@ -5,7 +5,7 @@ Welcome, investigator! You've found Fluttershy's secret chat room.
 ## How to Chat:
 
 ### Option 1: GitHub Pages (Easiest)
-Visit: **https://github.com/Ayah-web/chat-with-fluttershy.git**
+Visit: **[https://github.com/Ayah-web/chat-with-fluttershy.git](https://ayah-web.github.io/chat-with-fluttershy/)**
 
 ### Option 2: Run Locally  
 1. Download the `index.html` file
